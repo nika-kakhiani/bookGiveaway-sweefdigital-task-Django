@@ -9,14 +9,6 @@ class BookForm(forms.ModelForm):
                   'pages', 'description', 'pickup_location', 'image']
 
 
-# class BookFilterForm(forms.Form):
-#     author = forms.CharField(max_length=255, required=False)
-#     genre = forms.ModelChoiceField(
-#         queryset=Genre.objects.all(), required=False)
-#     condition = forms.ModelChoiceField(
-#         queryset=Condition.objects.all(), required=False)
-
-
 class GenreForm(forms.ModelForm):
     class Meta:
         model = Genre

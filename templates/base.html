@@ -98,6 +98,13 @@
 
     </div>
 
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <form class="d-flex mx-auto my-2 my-lg-0" action="{% url 'search_books' %}" method="get">
+  <input class="form-control me-2" type="search" name="q" placeholder="Search Books" aria-label="Search">
+  <button class="btn btn-outline-light" type="submit">Search</button>
+</form>
+    </div>
+
     <div class="collapse navbar-collapse text-center" id="navbarNavDropdown">
       <ul class="navbar-nav ms-auto">
 
@@ -139,6 +146,8 @@
           </li>
 
         {% endif %}
+
+
 
         &nbsp; &nbsp; &nbsp;
       </ul>

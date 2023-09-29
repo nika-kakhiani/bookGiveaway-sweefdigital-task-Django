@@ -5,6 +5,8 @@ from .models import Book, Genre
 from django.contrib import messages
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
 
 # Create your views here.
 
@@ -12,9 +14,15 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     all_books = Book.objects.all()
 
-    context = {
-        "all_books": all_books,
+    books_per_page = 10
 
+    paginator = Paginator(all_books, books_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {
+        "page": page,
+        "all_books": all_books,
     }
     return render(request, "home.html", context)
 

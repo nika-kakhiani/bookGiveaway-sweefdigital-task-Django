@@ -1,0 +1,84 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+    
+
+<section class="py-4 text-center container">
+
+  <div class="row py-lg-5">
+
+      <div class="col-lg-6 col-md-8 mx-auto">
+
+
+          <h4> Welcome to book giveaway service. </h4>
+
+
+          <br>
+
+
+          <p class="lead text-muted">
+
+          Please add your book
+
+          </p>
+
+
+          <br>
+
+          <a href="{% url 'create_book' %}" class="btn btn-primary my-2"><i class="fa-solid fa-plus"></i>&nbsp; Add Book </a>
+
+
+      </div>
+
+  </div>
+
+
+</section>
+
+
+
+<div class="album py-5 bg-light">
+
+    <div class="container">
+
+      <div class="pb-3 h5"> All Books </div>
+
+
+      <hr>
+
+      <br>
+
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
+
+        {% for book in all_books %}
+
+          <div class="col">
+            <div class="card shadow-sm">
+              
+              <img src="{{ book.image.url }}" alt="{{ book.title }}">
+              <div class="card-body">
+                <h1>{{ book.title }}</h1>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Genre:</strong> {{ book.genre }}</p>
+                <p><strong>Condition:</strong> {{ book.condition }}</p>
+                <p><strong>Pages:</strong> {{ book.pages }}</p>
+                <p><strong>Pickup Location:</strong> {{ book.pickup_location }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  {% comment %} <a class="text-info text-decoration-none" href="{{book.get_absolute_url}}">{{book.title}}</a> {% endcomment %}
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}

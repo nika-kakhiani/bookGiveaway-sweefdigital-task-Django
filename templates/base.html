@@ -70,8 +70,31 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Categories
+            Genres
           </a>
+          
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+            <li>
+
+                <a class="dropdown-item" href="{% url 'home' %}"> All </a>
+
+            </li>
+            {% for genre in all_genres %}
+            
+            <li>
+              
+              <a class="dropdown-item" href="{{genre.get_absolute_url}}"> {{ genre.name | capfirst }} </a>
+              
+            </li>
+            
+            {% endfor %}
+            <a href="{% url 'add_genre' %}" class="btn btn-primary my-2"><i class="fa-solid fa-plus"></i>&nbsp; Add Genre </a>
+          </ul>
+          
+    </li>
+
+</ul>
 
     </div>
 

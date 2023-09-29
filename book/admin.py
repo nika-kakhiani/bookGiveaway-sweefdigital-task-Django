@@ -1,9 +1,18 @@
 from django.contrib import admin
-from .models import Book
+from .models import Book, Genre, Condition
 # Register your models here.
 
 
-# admin.site.register(Author)
-# admin.site.register(Genre)
-# admin.site.register(Condition)
-admin.site.register(Book)
+@admin.register(Genre)
+class GenreAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(Condition)
+class ConditionAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("title",)}

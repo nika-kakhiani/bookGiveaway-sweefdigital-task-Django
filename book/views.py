@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404
-from .forms import BookForm, BookFilterForm
+from .forms import BookForm, GenreForm, EditBookForm
 from django.shortcuts import render, redirect
-from .models import Book
+from .models import Book, Genre
 from django.contrib import messages
+from django.utils.text import slugify
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -12,19 +14,41 @@ def home(request):
 
     context = {
         "all_books": all_books,
+
     }
     return render(request, "home.html", context)
 
 
+def genres(request):
+    all_genres = Genre.objects.all()
+
+    return {"all_genres": all_genres}
+
+
+def list_genres(request, slug=None):
+    genre = get_object_or_404(Genre, slug=slug)
+
+    books = Book.objects.filter(genre=genre)
+
+    context = {
+        "genre": genre,
+        "books": books,
+    }
+
+    return render(request, "book/list_genres.html", context)
+
+
+@login_required(login_url="login")
 def create_book(request):
     if request.method == 'POST':
         form = BookForm(request.POST, request.FILES)
         if form.is_valid():
             book = form.save(commit=False)
             book.owner = request.user
+            book.slug = slugify(book.title)
             book.save()
             messages.success(request, 'Book added successfully.')
-            return redirect('book_detail', pk=book.pk)
+            return redirect('book_detail', slug=book.slug)
         else:
             messages.error(
                 request, 'Error adding the book. Please correct the errors below.')
@@ -37,36 +61,58 @@ def create_book(request):
     return render(request, 'book/create_book.html', context)
 
 
-def book_detail(request, pk):
-    book = get_object_or_404(Book, pk=pk)
+def edit_book(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+
+    if request.method == 'POST':
+        form = EditBookForm(request.POST, request.FILES, instance=book)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Book updated successfully.')
+            return redirect('book_detail', slug=book.slug)
+    else:
+        form = EditBookForm(instance=book)
+
+    context = {
+        'form': form,
+        'book': book,
+    }
+    return render(request, 'book/edit_book.html', context)
+
+
+def delete_book(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if request.method == 'POST':
+        book.delete()
+        return redirect('home')
 
     context = {
         'book': book,
     }
-    return render(request, 'book/book_detail.html')
+    return render(request, 'book/delete_book.html', context)
 
 
-def filter_books(request):
-    if request.method == 'POST':
-        form = BookFilterForm(request.POST)
+def add_genre(request):
+    if request.method == "POST":
+        form = GenreForm(request.POST)
         if form.is_valid():
-            author = form.cleaned_data.get('author')
-            genre = form.cleaned_data.get('genre')
-            condition = form.cleaned_data.get('condition')
-
-            filtered_books = Book.objects.all()
-            if author:
-                filtered_books = filtered_books.filter(author=author)
-            if genre:
-                filtered_books = filtered_books.filter(genre=genre)
-            if condition:
-                filtered_books = filtered_books.filter(condition=condition)
-
-            return render(request, 'filtered_books.html', {'filtered_books': filtered_books})
+            genre = form.save(commit=False)
+            genre.slug = slugify(genre.name)
+            genre.save()
+            return redirect("home")
     else:
-        form = BookFilterForm()
+        form = GenreForm()
 
     context = {
-        'form': form,
+        "form": form,
     }
-    return render(request, 'filter_books.html', context)
+    return render(request, "book/add_genre.html", context)
+
+
+def book_detail(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+
+    context = {
+        'book': book,
+    }
+    return render(request, 'book/book_detail.html', context)

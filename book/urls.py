@@ -13,4 +13,17 @@ urlpatterns = [
     path("genre/<slug:slug>", views.list_genres, name="list_genres"),
     path("add_genre", views.add_genre, name="add_genre"),
 
+
+    path('api/genres/', views.GenreListView.as_view(), name='genre-list'),
+    path('api/conditions/', views.ConditionListView.as_view(), name='condition-list'),
+    path('api/books/', views.BookListView.as_view(), name='book-list'),
+    path('api/books/<slug:slug>/',
+         views.BookDetailView.as_view(), name='book-detail'),
+
+    path('api/books/<slug:slug>/pickup-location/',
+         views.get_pickup_location, name='get_pickup_location'),
+
+    path("book/<slug:slug>/express_interest/",
+         views.express_interest, name="express_interest"),
+
 ]

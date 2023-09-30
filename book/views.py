@@ -1,12 +1,19 @@
 from django.shortcuts import get_object_or_404
 from .forms import BookForm, GenreForm, EditBookForm
 from django.shortcuts import render, redirect
-from .models import Book, Genre
+from .models import Book, Genre, Condition, BookInterest
 from django.contrib import messages
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 
+from rest_framework import generics
+from .serializers import GenreSerializer, ConditionSerializer, BookSerializer
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -122,5 +129,51 @@ def book_detail(request, slug):
 
     context = {
         'book': book,
+        "book_owner": book.owner,
+        "user": request.user
     }
     return render(request, 'book/book_detail.html', context)
+
+
+def get_pickup_location(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+
+    context = {
+        'pickup_location': book.pickup_location,
+    }
+    return JsonResponse(context)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def express_interest(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+
+    existing_interest = BookInterest.objects.filter(
+        user=request.user, book=book).exists()
+    if existing_interest:
+        return Response({"error": "You have already expressed interest in this book."}, status=400)
+
+    BookInterest.objects.create(user=request.user, book=book)
+
+    return Response({"message": "Interest expressed successfully."}, status=200)
+
+
+class GenreListView(generics.ListCreateAPIView):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+
+
+class ConditionListView(generics.ListCreateAPIView):
+    queryset = Condition.objects.all()
+    serializer_class = ConditionSerializer
+
+
+class BookListView(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+
+class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer

@@ -31,15 +31,22 @@
                   <p> {{ book.description }} </p>            
                   <hr>
                   
-                  
-                  <a href="{% url 'edit_book' slug=book.slug %}" class="btn btn-primary btn-lg w-100 btn-block p-2">
-                    <span class="fw-bold">&nbsp; Edit Book</span>
-                </a>
-                <br>
-                <br>
-                <a href="{% url 'delete_book' slug=book.slug %}" class="btn btn-danger btn-lg w-100 btn-block p-2">
-                    <span class="fw-bold">&nbsp; Delete Book</span>
-                </a>
+                  {% if user.is_authenticated %}
+                    {% if user == book_owner %}
+                        <a href="{% url 'edit_book' slug=book.slug %}" class="btn btn-primary btn-lg w-100 btn-block p-2">
+                            <span class="fw-bold">&nbsp; Edit Book</span>
+                        </a>
+                        <br>
+                        <br>
+                        <a href="{% url 'delete_book' slug=book.slug %}" class="btn btn-danger btn-lg w-100 btn-block p-2">
+                            <span class="fw-bold">&nbsp; Delete Book</span>
+                        </a>
+                    {% else %}
+                    <a href="#" id="express-interest-btn" class="btn btn-success btn-lg w-100 btn-block p-2">
+                        <span class="fw-bold">&nbsp; Express Interest </span>
+                    </a>
+                    {% endif %}
+                   {% endif %} 
                 <br><br>
                 <a class="btn btn-primary navbar-btn text-white" type="button" href="{% url 'home' %}"><i class="fa-solid fa-arrow-left"></i>&nbsp; Go Back</a>
               </div>
@@ -51,6 +58,31 @@
   
   </div>
 <br><br>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#express-interest-btn").click(function(e) {
+            e.preventDefault();
+            
+            
+            $.ajax({
+                type: "POST",
+                url: "{% url 'express_interest' slug=book.slug %}", 
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}", 
+                },
+                success: function(response) {
+                    
+                    alert("Interest expressed successfully.");
+                },
+                error: function(xhr, status, error) {
+                    
+                    alert("Error: " + error);
+                }
+            });
+        });
+    });
+</script>
 
 
 

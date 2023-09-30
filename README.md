@@ -27,4 +27,6 @@ This project is built using Django, a high-level Python web framework. Users can
 
 
 source env\Scripts\activate
+
+
 pip install -r requirements.txt

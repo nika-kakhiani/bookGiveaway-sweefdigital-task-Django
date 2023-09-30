@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
+
+from book.models import Book, BookInterest
 from .forms import CreateUserForm, LoginForm, UpdateUserForm
 from django.contrib.sites.shortcuts import get_current_site
 from . token import user_tokenizer_generate
@@ -73,8 +75,13 @@ def login(request):
 
 @login_required(login_url="login")
 def dashboard(request):
+    user_book = Book.objects.filter(owner=request.user).first()
 
-    return render(request, "account/dashboard.html")
+    context = {
+        "user_book": user_book,
+    }
+
+    return render(request, "account/dashboard.html", context)
 
 
 def logout(request):
@@ -115,6 +122,36 @@ def delete_account(request):
         return redirect("home")
 
     return render(request, "account/delete-account.html")
+
+
+def interested_users_list(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    interested_users = BookInterest.objects.filter(book=book)
+
+    context = {
+        'book': book,
+        'interested_users': interested_users,
+    }
+    return render(request, 'book/interested_users_list.html', context)
+
+
+@login_required(login_url='login')
+def choose_recipient(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    interested_users = BookInterest.objects.filter(book=book)
+
+    if request.method == 'POST':
+        selected_user_id = request.POST.get('selected_user')
+        selected_user = get_object_or_404(User, id=selected_user_id)
+        messages.success(
+            request, f'Recipient chosen: {selected_user.username}')
+        return redirect('book_detail', slug=slug)
+
+    context = {
+        'book': book,
+        'interested_users': interested_users,
+    }
+    return render(request, 'book/choose_recipient.html', context)
 
 
 def email_verification(request, uidb64, token):

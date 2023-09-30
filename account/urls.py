@@ -25,6 +25,12 @@ urlpatterns = [
     path("profile-management", views.profile_management, name="profile-management"),
     path("delete-account", views.delete_account, name="delete-account"),
 
+    path('book/<slug:slug>/choose_recipient/',
+         views.choose_recipient, name='choose_recipient'),
+
+    path('book/<slug:slug>/interested_users/',
+         views.interested_users_list, name='interested_users_list'),
+
     path("reset_password", auth_views.PasswordResetView.as_view(
         template_name="account/password/password-reset.html"), name="reset_password"),
     path("reset_password_sent", auth_views.PasswordResetDoneView.as_view(

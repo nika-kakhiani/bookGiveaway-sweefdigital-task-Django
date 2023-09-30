@@ -1,0 +1,40 @@
+
+{% include "base.html" %}
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+  <style media="screen">
+    body{
+      background-color: gray;
+    }
+  </style>
+
+
+  <body>
+    <br>
+    <br>
+
+    <div class="container bg-white shadow-md p-5 form-layout">
+      <h1>Interested Users for "{{ book.title }}"</h1>
+      <ul>
+        {% for user in interested_users %}
+          <li>{{ user.user.username }}</li>
+        {% empty %}
+          <li>No interested users.</li>
+        {% endfor %}
+      </ul>
+
+      <a class="btn btn-primary navbar-btn text-white" type="button" href="{% url 'choose_recipient' slug=book.slug %}">Choose Recipient</a>
+
+      <a class="btn btn-primary navbar-btn text-white" type="button" href="{% url 'book_detail' slug=book.slug %}">Back to Book Details</a>
+    </div>
+    <br>
+    <br>
+   
+  </body>
+  <br><br>
+
+{% endblock %}

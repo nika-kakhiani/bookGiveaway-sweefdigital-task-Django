@@ -17,6 +17,14 @@
     <p>This is your dashboard where you can perform any of the following: </p>
     
     <li>Manage your account</li>
+    <li>See interested people list</li>
+  </div>
+  <br>
+  <div class="container bg-white shadow-md p-5 form-layout">
+    <h4>Interested list</h4>
+    <hr>
+    <p>See who is interested in your books...</p>
+    <a class="btn btn-primary navbar-btn text-white" type="button" href="{% if user_book %}{% url 'interested_users_list' slug=user_book.slug %}{% endif %}">Show List</a>
   </div>
  
   <br>

@@ -144,6 +144,8 @@ def get_pickup_location(request, slug):
     return JsonResponse(context)
 
 
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def express_interest(request, slug):

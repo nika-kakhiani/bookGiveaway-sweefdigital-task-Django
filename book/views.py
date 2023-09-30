@@ -14,6 +14,7 @@ from .serializers import GenreSerializer, ConditionSerializer, BookSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -144,6 +145,34 @@ def get_pickup_location(request, slug):
     return JsonResponse(context)
 
 
+def interested_users_list(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    interested_users = BookInterest.objects.filter(book=book)
+
+    context = {
+        'book': book,
+        'interested_users': interested_users,
+    }
+    return render(request, 'book/interested_users_list.html', context)
+
+
+@login_required(login_url='login')
+def choose_recipient(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    interested_users = BookInterest.objects.filter(book=book)
+
+    if request.method == 'POST':
+        selected_user_id = request.POST.get('selected_user')
+        selected_user = get_object_or_404(User, id=selected_user_id)
+        messages.success(
+            request, f'Recipient chosen: {selected_user.username}')
+        return redirect('book_detail', slug=slug)
+
+    context = {
+        'book': book,
+        'interested_users': interested_users,
+    }
+    return render(request, 'book/choose_recipient.html', context)
 
 
 @api_view(['POST'])

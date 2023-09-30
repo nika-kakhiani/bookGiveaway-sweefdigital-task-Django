@@ -26,4 +26,11 @@ urlpatterns = [
     path("book/<slug:slug>/express_interest/",
          views.express_interest, name="express_interest"),
 
+    path('book/<slug:slug>/choose_recipient/',
+         views.choose_recipient, name='choose_recipient'),
+
+    path('book/<slug:slug>/interested_users/',
+         views.interested_users_list, name='interested_users_list'),
+
+
 ]

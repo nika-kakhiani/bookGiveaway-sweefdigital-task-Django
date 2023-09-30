@@ -7,6 +7,7 @@ class BookForm(forms.ModelForm):
         model = Book
         fields = ['title', 'author', 'genre', 'condition',
                   'pages', 'description', 'pickup_location', 'image']
+        
 
 
 class GenreForm(forms.ModelForm):

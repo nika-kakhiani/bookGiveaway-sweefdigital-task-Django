@@ -54,7 +54,6 @@ class Book(models.Model):
         super().save(*args, **kwargs)
 
 
-
 class BookInterest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
